@@ -1,6 +1,7 @@
 from db import db
 from sqlalchemy import Date
 from models.machine_post import MachinePostModel
+from models.machine_status import MachineStatusModel
 
 
 class MachineModel(db.Model):
@@ -33,6 +34,7 @@ class MachineModel(db.Model):
         self.machine_status_id = machine_status_id
 
     def json(self):
+        status = MachineStatusModel.query.filter_by(machine_status_id=self.machine_status_id).first()
         return {
             "machine_id": self.machine_id,
             "name": self.name,
@@ -40,6 +42,7 @@ class MachineModel(db.Model):
             "last_full_service": str(self.last_full_service),
             "network_address": self.network_address,
             "machine_status_id": self.machine_status_id,
+            'machine_status_title': status.title,
             "machine_posts": [
                 post.json()
                 for post in MachinePostModel.query.filter_by(
